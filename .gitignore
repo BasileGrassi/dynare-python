@@ -1,1 +1,9 @@
 *.pyc
+/.idea/encodings.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
+/.idea/dynare-python.iml
+/dolo/src/dolo/symbolic/symbolic$py.class
+/dolo/src/dolo/symbolic/__init__$py.class
