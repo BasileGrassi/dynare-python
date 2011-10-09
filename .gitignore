@@ -7,3 +7,6 @@
 /.idea/dynare-python.iml
 /dolo/src/dolo/symbolic/symbolic$py.class
 /dolo/src/dolo/symbolic/__init__$py.class
+/.idea/.name
+/.idea/other.xml
+/.idea/scopes/scope_settings.xml
