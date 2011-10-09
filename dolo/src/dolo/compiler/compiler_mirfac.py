@@ -547,7 +547,10 @@ end
         def write_eqs(eq_l,outname='out1',ntabs=0):
             eq_block = '  ' * ntabs + '{0} = zeros(n,{1});'.format(outname,len(eq_l))
             for i,eq in enumerate(eq_l):
-                eq_block += '\n' + '  ' * ntabs + '{0}(:,{1}) = {2};'.format( outname,  i+1,  dp.doprint_matlab(eq,vectorize=True) )
+                eq_block += '\n' + '  ' * ntabs + \
+                            '{0}(:,{1}) = {2};'.format(outname,
+                                                       i+1,
+                                                       dp.doprint_matlab(eq,vectorize=True))
             return eq_block
 
         def write_der_eqs(eq_l,v_l,lhs,ntabs=0):
@@ -560,9 +563,21 @@ end
                         eq_block += '\n' + '  ' * ntabs + '{lhs}(:,{0},{1}) = {2}; % d eq_{eq_n} w.r.t. {vname}'.format(i+1,j+1,s,lhs=lhs,eq_n=i+1,vname=str(v_l[j]) )
             return eq_block
 
-        eq_bounds_block = write_eqs(inf_bounds,ntabs=2)
+        def write_bounds(eq_l,outname='out1',bound_sign='',ntabs=0):
+            eq_block = '  ' * ntabs + '{0} = '.format(outname) + \
+                       bound_sign + 'inf(n,{0});'.format(len(eq_l))
+            for i,eq in enumerate(eq_l):
+                s = dp.doprint_matlab(eq,vectorize=True)
+                if s!=bound_sign + 'inf':
+                    eq_block += '\n' + '  ' * ntabs + \
+                                '{0}(:,{1}) = {2};'.format(outname,
+                                                           i+1,
+                                                           s)
+            return eq_block
+
+        eq_bounds_block  = write_bounds(inf_bounds,bound_sign='-',ntabs=2)
         eq_bounds_block += '\n'
-        eq_bounds_block += write_eqs(sup_bounds,'out2',ntabs=2)
+        eq_bounds_block += write_bounds(sup_bounds,outname='out2',ntabs=2)
 
         eq_f_block = '''
     % f
