@@ -288,7 +288,10 @@ def model(flag,s,x,ep,e,{param_names}):
         #f.write( text )
         #f.close()
 
-    def process_output_matlab_old(self,target='recs',with_parameters_values=True, with_solution=False):
+    def process_output_matlab_old(self,
+                                  target='recs',
+                                  with_parameters_values=True,
+                                  with_solution=False):
 
         if target == 'recs':
             with_param_names = False
@@ -408,7 +411,7 @@ end;
         param_def = 'p = [ ' + str.join(',',[p.name for p in dmodel.parameters])  + '];'
 
         if not with_parameters_values:
-            params_values = ''
+            params_values = '    out1 = [];'
         else:
             [y,x,params] = model.read_calibration()
             params_values = 'out1 = [' + str.join(  ',', [ str( p ) for p in params] ) + '];'
@@ -449,7 +452,10 @@ end;
 
         return text
 
-    def process_output_matlab(self,target='recs', with_parameters_values=True, with_solution=False):
+    def process_output_matlab(self,
+                              target='recs',
+                              with_parameters_values=True,
+                              with_solution=False):
 
         with_param_names = False
 
