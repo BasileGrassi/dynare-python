@@ -7,3 +7,5 @@
 /.idea/dynare-python.iml
 /dolo/src/dolo/symbolic/symbolic$py.class
 /dolo/src/dolo/symbolic/__init__$py.class
+/dolo/build
+*quantization_grid*
