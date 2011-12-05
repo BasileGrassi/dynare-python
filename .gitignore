@@ -5,7 +5,8 @@
 /.idea/vcs.xml
 /.idea/workspace.xml
 /.idea/dynare-python.iml
-/dolo/src/dolo/symbolic/symbolic$py.class
-/dolo/src/dolo/symbolic/__init__$py.class
-/dolo/build
-*quantization_grid*
+/.idea/.name
+/.idea/other.xml
+/.idea/scopes/scope_settings.xml
+/dolo/src/dolo/numeric/data/*
+*.pickle
