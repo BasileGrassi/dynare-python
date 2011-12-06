@@ -1,4 +1,5 @@
 *.pyc
+/.idea/*
 /.idea/encodings.xml
 /.idea/misc.xml
 /.idea/modules.xml
@@ -10,3 +11,5 @@
 /.idea/scopes/scope_settings.xml
 /dolo/src/dolo/numeric/data/*
 *.pickle
+/dolo/tests/.coverage
+*.swp
