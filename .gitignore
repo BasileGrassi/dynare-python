@@ -13,3 +13,5 @@
 *.pickle
 /dolo/tests/.coverage
 *.swp
+*.pyo
+*.so
