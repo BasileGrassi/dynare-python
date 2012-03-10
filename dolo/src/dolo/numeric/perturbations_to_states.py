@@ -22,7 +22,7 @@ def interim_gm( model, substitute_auxiliary, solve_systems, order):
     return [gm,g_fun,f_fun]
 
 
-def approximate_controls(model, order=1, lambda_name=None, substitute_auxiliary=False, return_dr=True, solve_systems=False):
+def approximate_controls(model, order=1, lambda_name=None, find_ss=False,  substitute_auxiliary=False, return_dr=True, solve_systems=False):
 
     [gm, g_fun, f_fun] = interim_gm(model, substitute_auxiliary, solve_systems, order)
 
@@ -32,7 +32,8 @@ def approximate_controls(model, order=1, lambda_name=None, substitute_auxiliary=
     parms = numpy.array(parms)
 
     y = y0
-    #y = model.solve_for_steady_state(y0)
+    if find_ss:
+        y = model.solve_for_steady_state(y0)
 
     sigma = numpy.array( model.read_covariances() ).astype(float)
     states_ss = numpy.array([y[model.variables.index(v)] for v in gm['states']]).astype(float)
