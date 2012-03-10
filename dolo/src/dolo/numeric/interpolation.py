@@ -160,13 +160,94 @@ class SplineInterpolation2:
 #        return [val,dval]
 
 class LinearTriangulation:
-    def __init__(self,domain):
-        self.domain = domain
-        self.delaunay = domain.delaunay
+
+    def __init__(self, points):
+        from scipy.spatial import Delaunay
+        self.d = points.shape[0]
+        if self.d == 1:
+            raise(Exception("Impossible to triangulate in 1 dimension."))
+
+        self.grid = points
+
+        # we add very far points to the delaunay triangulation
+        very_far = 10000
+        boundary = numpy.column_stack( cartesian( [(-very_far,very_far)]*self.d ) )
+
+        all_points = numpy.column_stack([ points, boundary])
+        self.n_boundary = boundary.shape[1]
+        self.all_points = all_points
+
+        self.delaunay = Delaunay(all_points.T)
+        self.smin = numpy.min(all_points,axis=1)
+        self.smax = numpy.max(all_points,axis=1)
+        self.bounds = np.array( [self.smin,self.smax] )
 
     def __call__(self, zz):
         return self.interpolate(zz)[0]
 
+    def fit_values(self, val):
+        nv = val.shape[0]
+        self.__values__ = numpy.column_stack( [ val, numpy.zeros((nv, self.n_boundary)) ] )
+
+    def interpolate(self, points):
+        n_x = self.__values__.shape[0]
+        n_p = points.shape[1]
+        n_d = self.d
+        resp = np.zeros((n_x,n_p))
+        dresp = np.zeros((n_x,n_d,n_p))
+        for i in range(n_x):
+            [val,dval] = self.interpolate_1v(i,points)
+            resp[i,:] = val
+            dresp[i,:,:] = dval
+        return [resp,dresp]
+
+    def interpolate_1v(self, i, points):
+
+        zz = points
+        ndim = self.d
+        delaunay = self.delaunay
+        nvalues_on_points = self.__values__[i,:]
+        from dolo.numeric.serial_operations import serial_dot
+        from dolo.numeric.serial_operations import serial_multiplication as stm
+        n_p = zz.shape[1]
+        n_x = zz.shape[0]
+        resp = numpy.zeros(n_p) + 1
+        dresp = numpy.zeros( (n_x, n_p) )
+        inds_simplices = delaunay.find_simplex(zz.T)
+        inside = (inds_simplices != -1)
+        if True not in inside:
+            return [resp,dresp]
+        indices = inds_simplices[inside]
+        transform = delaunay.transform[indices,:,:]
+        transform = numpy.rollaxis(transform,0,3)
+        Tinv = transform[:ndim,:ndim,:]
+        r = transform[ndim,:,:]
+        vertices = delaunay.vertices.T[:,indices]
+
+        z = zz[:,inside]
+
+        values_on_vertices = nvalues_on_points[vertices]
+
+        last_V = values_on_vertices[-1,:]
+        D = values_on_vertices[:-1,:] - last_V
+        z_r = z-r
+        c = serial_dot(Tinv, z_r)
+        interp_vals = serial_dot(c, D) + last_V
+        interp_dvals = serial_dot(D, Tinv)
+
+        resp[inside] = interp_vals
+        dresp[:,inside] = interp_dvals
+
+        return [resp,dresp]
+
+class LinearTriangulationOld:
+    def __init__(self,domain):
+        self.domain = domain
+        self.delaunay = domain.delaunay
+        self.grid = self.domain.grid
+
+    def __call__(self, zz):
+        return self.interpolate(zz)[0]
 
     def fit_values(self, val):
         self.__values__ = val
@@ -185,10 +266,6 @@ class LinearTriangulation:
 
     def interpolate_1v(self, i, points):
 
-#        points = numpy.minimum(points, self.domain.smax) # only for rectangular domains
-#        points = numpy.maximum(points, self.domain.smin) # only for rectangular domains
-#        print points
-
         zz = points
         ndim = self.domain.d
         delaunay = self.delaunay
@@ -196,7 +273,7 @@ class LinearTriangulation:
         from dolo.numeric.serial_operations import serial_dot
         n_p = zz.shape[1]
         n_x = zz.shape[0]
-        resp = numpy.zeros(n_p)
+        resp = numpy.zeros(n_p) + 1
         dresp = numpy.zeros( (n_x, n_p) )
         inds_simplices = delaunay.find_simplex(zz.T)
         inside = (inds_simplices != -1)
