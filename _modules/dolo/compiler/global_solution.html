@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dolo.compiler.global_solution &mdash; dolo 0.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="dolo 0.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">dolo 0.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for dolo.compiler.global_solution</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">All informations about this module.</span>
+<span class="sd">I can use complex formulas: :math:`n_{\mathrm{offset}} = \sum_{k=0}^{N-1} s_k n_k`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="deterministic_residuals"><a class="viewcode-back" href="../../../test.html#dolo.compiler.global_solution.deterministic_residuals">[docs]</a><span class="k">def</span> <span class="nf">deterministic_residuals</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">parms</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param s:</span>
+<span class="sd">    :param x:</span>
+<span class="sd">    :param interp:</span>
+<span class="sd">    :param f:</span>
+<span class="sd">    :param g:</span>
+<span class="sd">    :param sigma:</span>
+<span class="sd">    :param parms:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_g</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">interp</span><span class="o">.</span><span class="n">fit_values</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">dummy_epsilons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_e</span><span class="p">,</span><span class="n">n_g</span><span class="p">))</span>
+    <span class="p">[</span><span class="n">snext</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">dummy_epsilons</span><span class="p">,</span><span class="n">parms</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">xnext</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">snext</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">snext</span><span class="p">,</span><span class="n">xnext</span><span class="p">,</span><span class="n">dummy_epsilons</span><span class="p">,</span><span class="n">parms</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">val</span>
+
+</div>
+<span class="k">def</span> <span class="nf">stochastic_residuals</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="n">n_draws</span> <span class="o">=</span> <span class="n">epsilons</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">dr</span><span class="o">.</span><span class="n">fit_values</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_draws</span><span class="p">))</span>
+    <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_draws</span><span class="p">))</span>
+    <span class="n">ee</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">epsilons</span><span class="p">,</span> <span class="n">n_g</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">ssnext</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">ee</span><span class="p">,</span><span class="n">parms</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">xxnext</span><span class="p">]</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">ssnext</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">ssnext</span><span class="p">,</span><span class="n">xxnext</span><span class="p">,</span><span class="n">ee</span><span class="p">,</span><span class="n">parms</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_draws</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">val</span><span class="p">[:,</span><span class="n">n_g</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="n">n_g</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">def</span> <span class="nf">stochastic_residuals_2</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">no_deriv</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+
+    <span class="n">n_t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">dr</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="c">#    [x, x_s, x_theta] = dr.interpolate(s, with_theta_deriv=True)</span>
+    <span class="n">n_draws</span> <span class="o">=</span> <span class="n">epsilons</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">n_s</span><span class="p">,</span><span class="n">n_g</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_draws</span><span class="p">))</span>
+    <span class="p">[</span><span class="n">xx</span><span class="p">,</span> <span class="n">xx_s</span><span class="p">,</span> <span class="n">xx_theta</span><span class="p">]</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span> <span class="n">with_theta_deriv</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># should repeat theta instead</span>
+    <span class="n">n_x</span> <span class="o">=</span> <span class="n">xx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c">#    xx = np.tile(x, (1,n_draws))</span>
+    <span class="n">ee</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">epsilons</span><span class="p">,</span> <span class="n">n_g</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">SS</span><span class="p">,</span> <span class="n">SS_ss</span><span class="p">,</span> <span class="n">SS_xx</span><span class="p">,</span> <span class="n">SS_ee</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span> <span class="n">xx</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">parms</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">XX</span><span class="p">,</span> <span class="n">XX_SS</span><span class="p">,</span> <span class="n">XX_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">SS</span><span class="p">,</span> <span class="n">with_theta_deriv</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">F</span><span class="p">,</span> <span class="n">F_ss</span><span class="p">,</span> <span class="n">F_xx</span><span class="p">,</span> <span class="n">F_SS</span><span class="p">,</span> <span class="n">F_XX</span><span class="p">,</span> <span class="n">F_ee</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span> <span class="n">xx</span><span class="p">,</span> <span class="n">SS</span><span class="p">,</span> <span class="n">XX</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">parms</span><span class="p">)</span>
+
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_draws</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">F</span><span class="p">[:,</span><span class="n">n_g</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="n">n_g</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">no_deriv</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="kn">from</span> <span class="nn">dolo.numeric.serial_operations</span> <span class="kn">import</span> <span class="n">serial_multiplication</span> <span class="k">as</span> <span class="n">stm</span>
+    <span class="n">SS_theta</span> <span class="o">=</span> <span class="n">stm</span><span class="p">(</span> <span class="n">SS_xx</span><span class="p">,</span> <span class="n">xx_theta</span><span class="p">)</span>
+    <span class="n">XX_theta</span> <span class="o">=</span> <span class="n">stm</span><span class="p">(</span> <span class="n">XX_SS</span><span class="p">,</span> <span class="n">SS_theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">XX_t</span>
+    <span class="n">dF</span> <span class="o">=</span> <span class="n">stm</span><span class="p">(</span><span class="n">F_xx</span><span class="p">,</span> <span class="n">xx_theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">stm</span><span class="p">(</span> <span class="n">F_SS</span><span class="p">,</span> <span class="n">SS_theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">stm</span><span class="p">(</span> <span class="n">F_XX</span> <span class="p">,</span> <span class="n">XX_theta</span><span class="p">)</span>
+    <span class="n">dres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_t</span><span class="p">,</span><span class="n">n_g</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_draws</span><span class="p">):</span>
+        <span class="n">dres</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">dF</span><span class="p">[:,:,</span><span class="n">n_g</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="n">n_g</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">,</span><span class="n">dres</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span>
+
+<span class="k">def</span> <span class="nf">stochastic_residuals_3</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">no_deriv</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+
+    <span class="kn">import</span> <span class="nn">numpy</span>
+    <span class="n">n_t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">dr</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="c">#    [x, x_s, x_theta] = dr.interpolate(s, with_theta_deriv=True)</span>
+    <span class="n">n_draws</span> <span class="o">=</span> <span class="n">epsilons</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">n_s</span><span class="p">,</span><span class="n">n_g</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span>
+    <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">x_s</span><span class="p">,</span> <span class="n">x_theta</span><span class="p">]</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">with_theta_deriv</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># should repeat theta instead</span>
+    <span class="n">n_x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c">#    xx = np.tile(x, (1,n_draws))</span>
+    <span class="c">#ee = np.repeat(epsilons, n_g , axis=1)</span>
+    <span class="c">#</span>
+    <span class="kn">from</span> <span class="nn">dolo.numeric.serial_operations</span> <span class="kn">import</span> <span class="n">serial_multiplication</span> <span class="k">as</span> <span class="n">stm</span>
+    <span class="c">#</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">dres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_t</span><span class="p">,</span><span class="n">n_g</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_draws</span><span class="p">):</span>
+        <span class="n">tt</span> <span class="o">=</span> <span class="p">[</span><span class="n">epsilons</span><span class="p">[:,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span><span class="o">*</span><span class="n">n_g</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span>
+        <span class="p">[</span><span class="n">S</span><span class="p">,</span> <span class="n">S_s</span><span class="p">,</span> <span class="n">S_x</span><span class="p">,</span> <span class="n">S_e</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">parms</span><span class="p">)</span>
+        <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">X_S</span><span class="p">,</span> <span class="n">X_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">with_theta_deriv</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="p">[</span><span class="n">F</span><span class="p">,</span> <span class="n">F_s</span><span class="p">,</span> <span class="n">F_x</span><span class="p">,</span> <span class="n">F_S</span><span class="p">,</span> <span class="n">F_X</span><span class="p">,</span> <span class="n">F_e</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">parms</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">F</span>
+        <span class="n">S_theta</span> <span class="o">=</span> <span class="n">stm</span><span class="p">(</span><span class="n">S_x</span><span class="p">,</span> <span class="n">x_theta</span><span class="p">)</span>
+        <span class="n">X_theta</span> <span class="o">=</span> <span class="n">stm</span><span class="p">(</span><span class="n">X_S</span><span class="p">,</span> <span class="n">S_theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">X_t</span>
+        <span class="n">dF</span> <span class="o">=</span> <span class="n">stm</span><span class="p">(</span><span class="n">F_x</span><span class="p">,</span> <span class="n">x_theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">stm</span><span class="p">(</span> <span class="n">F_S</span><span class="p">,</span> <span class="n">S_theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">stm</span><span class="p">(</span> <span class="n">F_X</span> <span class="p">,</span> <span class="n">X_theta</span><span class="p">)</span>
+        <span class="n">dres</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">dF</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">,</span><span class="n">dres</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span>
+
+<span class="k">def</span> <span class="nf">step_residual</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">x_bounds</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">serial_grid</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">with_derivatives</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="n">n_draws</span> <span class="o">=</span> <span class="n">epsilons</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+    <span class="kn">from</span> <span class="nn">dolo.numeric.serial_operations</span> <span class="kn">import</span> <span class="n">serial_multiplication</span> <span class="k">as</span> <span class="n">stm</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_draws</span><span class="p">))</span>
+    <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_draws</span><span class="p">))</span>
+    <span class="n">ee</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">epsilons</span><span class="p">,</span> <span class="n">n_g</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">with_derivatives</span><span class="p">:</span>
+        <span class="p">[</span><span class="n">ssnext</span><span class="p">,</span> <span class="n">g_ss</span><span class="p">,</span> <span class="n">g_xx</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">ee</span><span class="p">,</span><span class="n">parms</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="p">[</span><span class="n">xxnext</span><span class="p">,</span> <span class="n">xxold_ss</span><span class="p">]</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">ssnext</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">x_bounds</span><span class="p">:</span>
+            <span class="p">[</span><span class="n">lb</span><span class="p">,</span><span class="n">ub</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_bounds</span><span class="p">(</span><span class="n">ssnext</span><span class="p">,</span> <span class="n">parms</span><span class="p">)</span>
+            <span class="n">xxnext</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span><span class="n">xxnext</span><span class="p">),</span><span class="n">lb</span><span class="p">)</span>
+
+        <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="n">f_ss</span><span class="p">,</span> <span class="n">f_xx</span><span class="p">,</span> <span class="n">f_ssnext</span><span class="p">,</span> <span class="n">f_xxnext</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">ssnext</span><span class="p">,</span><span class="n">xxnext</span><span class="p">,</span><span class="n">ee</span><span class="p">,</span><span class="n">parms</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">dval</span> <span class="o">=</span> <span class="n">f_xx</span> <span class="o">+</span> <span class="n">stm</span><span class="p">(</span><span class="n">f_ssnext</span><span class="p">,</span> <span class="n">g_xx</span><span class="p">)</span> <span class="o">+</span> <span class="n">stm</span><span class="p">(</span><span class="n">f_xxnext</span><span class="p">,</span> <span class="n">stm</span><span class="p">(</span><span class="n">xxold_ss</span><span class="p">,</span> <span class="n">g_xx</span><span class="p">))</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_draws</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">val</span><span class="p">[:,</span><span class="n">n_g</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="n">n_g</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+
+        <span class="n">dres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_draws</span><span class="p">):</span>
+            <span class="n">dres</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">dval</span><span class="p">[:,:,</span><span class="n">n_g</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="n">n_g</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">serial_grid</span><span class="p">:</span>
+            <span class="n">dval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">,</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_g</span><span class="p">):</span>
+                <span class="n">dval</span><span class="p">[:,</span><span class="n">i</span><span class="p">,:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dres</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dval</span> <span class="o">=</span> <span class="n">dres</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">,</span> <span class="n">dval</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="p">[</span><span class="n">ssnext</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">ee</span><span class="p">,</span><span class="n">parms</span><span class="p">,</span><span class="n">derivs</span><span class="o">=</span><span class="bp">False</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="n">xxnext</span><span class="p">]</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">ssnext</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">x_bounds</span><span class="p">:</span>
+            <span class="p">[</span><span class="n">lb</span><span class="p">,</span><span class="n">ub</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_bounds</span><span class="p">(</span><span class="n">ssnext</span><span class="p">,</span> <span class="n">parms</span><span class="p">)</span>
+            <span class="n">xxnext</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span><span class="n">xxnext</span><span class="p">),</span><span class="n">lb</span><span class="p">)</span>
+
+        <span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">ssnext</span><span class="p">,</span><span class="n">xxnext</span><span class="p">,</span><span class="n">ee</span><span class="p">,</span><span class="n">parms</span><span class="p">,</span><span class="n">derivs</span><span class="o">=</span><span class="bp">False</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_draws</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">val</span><span class="p">[:,</span><span class="n">n_g</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="n">n_g</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">]</span>
+
+
+<span class="c">#f = model_fun[&#39;f&#39;]</span>
+<span class="c">#g = model_fun[&#39;g&#39;]</span>
+<span class="k">def</span> <span class="nf">test_residuals</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">dr</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="n">n_draws</span> <span class="o">=</span> <span class="n">epsilons</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">n_g</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">dr</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">n_x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_draws</span><span class="p">))</span>
+    <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_draws</span><span class="p">))</span>
+    <span class="n">ee</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">epsilons</span><span class="p">,</span> <span class="n">n_g</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="p">[</span><span class="n">ssnext</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">ee</span><span class="p">,</span><span class="n">parms</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">xxnext</span> <span class="o">=</span> <span class="n">dr</span><span class="p">(</span><span class="n">ssnext</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">ssnext</span><span class="p">,</span><span class="n">xxnext</span><span class="p">,</span><span class="n">ee</span><span class="p">,</span><span class="n">parms</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n_x</span><span class="p">,</span><span class="n">n_g</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_draws</span><span class="p">):</span>
+        <span class="n">errors</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">val</span><span class="p">[:,</span><span class="n">n_g</span><span class="o">*</span><span class="n">i</span><span class="p">:</span><span class="n">n_g</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+
+    <span class="n">squared_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">std_errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">squared_errors</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">squared_errors</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">std_errors</span>
+
+
+<span class="k">def</span> <span class="nf">time_iteration</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">xinit</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">x_bounds</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{},</span> <span class="n">serial_grid</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;lmmcp&#39;</span><span class="p">,</span> <span class="n">maxit</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">nmaxit</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">backsteps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">hook</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="kn">from</span> <span class="nn">dolo.numeric.solver</span> <span class="kn">import</span> <span class="n">solver</span>
+    <span class="kn">from</span> <span class="nn">dolo.numeric.newton</span> <span class="kn">import</span> <span class="n">newton_solver</span>
+
+    <span class="k">if</span> <span class="n">serial_grid</span><span class="p">:</span>
+        <span class="c">#fun = lambda x: step_residual(grid, x, interp, f, g, parms, epsilons, weights, x_bounds=x_bounds, with_derivatives=False)[0]</span>
+        <span class="c">#dfun = lambda x: step_residual(grid, x, interp, f, g, parms, epsilons, weights, x_bounds=x_bounds)[1]</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">step_residual</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">x_bounds</span><span class="o">=</span><span class="n">x_bounds</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">step_residual</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">x_bounds</span><span class="o">=</span><span class="n">x_bounds</span><span class="p">,</span> <span class="n">serial_grid</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">with_derivatives</span><span class="o">=</span><span class="bp">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dfun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">step_residual</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">parms</span><span class="p">,</span> <span class="n">epsilons</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">x_bounds</span><span class="o">=</span><span class="n">x_bounds</span><span class="p">,</span> <span class="n">serial_grid</span><span class="o">=</span><span class="bp">False</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c">#</span>
+    <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="c">##</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">xinit</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">verbit</span> <span class="o">=</span> <span class="bp">True</span> <span class="k">if</span> <span class="n">verbose</span><span class="o">==</span><span class="s">&#39;full&#39;</span> <span class="k">else</span> <span class="bp">False</span>
+
+    <span class="k">if</span> <span class="n">x_bounds</span><span class="p">:</span>
+        <span class="p">[</span><span class="n">lb</span><span class="p">,</span><span class="n">ub</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_bounds</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">parms</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;|Iteration</span><span class="se">\t</span><span class="s">|</span><span class="se">\t</span><span class="s">Step</span><span class="se">\t\t\t</span><span class="s">|</span><span class="se">\t</span><span class="s">Time (s)</span><span class="se">\t</span><span class="s">|&quot;</span>
+        <span class="n">nnn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="o">*</span><span class="mi">4</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="o">*</span><span class="n">nnn</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="o">*</span><span class="n">nnn</span><span class="p">)</span>
+
+
+
+    <span class="k">while</span> <span class="n">err</span> <span class="o">&gt;</span> <span class="n">tol</span> <span class="ow">and</span> <span class="n">it</span> <span class="o">&lt;</span> <span class="n">maxit</span><span class="p">:</span>
+        <span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">it</span> <span class="o">+=</span><span class="mi">1</span>
+        <span class="n">interp</span><span class="o">.</span><span class="n">fit_values</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">serial_grid</span><span class="p">:</span>
+            <span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">nit</span><span class="p">]</span> <span class="o">=</span> <span class="n">newton_solver</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span><span class="n">x0</span><span class="p">,</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span><span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span><span class="n">infos</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">backsteps</span><span class="o">=</span><span class="n">backsteps</span><span class="p">,</span> <span class="n">maxit</span><span class="o">=</span><span class="n">nmaxit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">solver</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">dfun</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+            <span class="n">nit</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c"># we restrict the solution to lie inside the boundaries</span>
+        <span class="k">if</span> <span class="n">x_bounds</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span><span class="n">x</span><span class="p">),</span><span class="n">lb</span><span class="p">)</span>
+        <span class="c">#        res = abs(fun(x)).max()</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">t_finish</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">t_finish</span> <span class="o">-</span> <span class="n">t_start</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t\t</span><span class="s">{}</span><span class="se">\t</span><span class="s">|</span><span class="se">\t</span><span class="s">{:e}</span><span class="se">\t</span><span class="s">|</span><span class="se">\t</span><span class="s">{:f}</span><span class="se">\t</span><span class="s">|</span><span class="se">\t</span><span class="s">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">it</span><span class="p">,</span><span class="n">err</span><span class="p">,</span><span class="n">elapsed</span><span class="p">,</span><span class="n">nit</span><span class="p">))</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hook</span><span class="p">:</span>
+            <span class="n">hook</span><span class="p">(</span><span class="n">interp</span><span class="p">,</span><span class="n">it</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">False</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x0</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;iteration {} failed : non finite value&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">x0</span><span class="p">,</span> <span class="n">x</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">it</span> <span class="o">==</span> <span class="n">maxit</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">(</span><span class="s">&quot;Maximum number of iterations reached&quot;</span><span class="p">))</span>
+
+
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Elapsed: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">interp</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">dolo 0.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Pablo Winant.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

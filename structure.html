@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to dolo’s documentation! &mdash; dolo 0.3 documentation</title>
+    <title>Informations for developpers &mdash; dolo 0.3 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,8 +26,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="dolo 0.3 documentation" href="#" />
-    <link rel="next" title="Quick tutorial" href="tutorial.html" /> 
+    <link rel="top" title="dolo 0.3 documentation" href="index.html" />
+    <link rel="next" title="Testing function documentation" href="test.html" />
+    <link rel="prev" title="Install on windows" href="install_windows.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,27 +41,25 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tutorial.html" title="Quick tutorial"
+          <a href="test.html" title="Testing function documentation"
              accesskey="N">next</a> |</li>
-        <li><a href="#">dolo 0.3 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="install_windows.html" title="Install on windows"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">dolo 0.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Welcome to dolo&#8217;s documentation!</a><ul>
-</ul>
-</li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
-</ul>
-
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install_windows.html"
+                        title="previous chapter">Install on windows</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="tutorial.html"
-                        title="next chapter">Quick tutorial</a></p>
+  <p class="topless"><a href="test.html"
+                        title="next chapter">Testing function documentation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
+    <li><a href="_sources/structure.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -84,29 +83,54 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-dolo-s-documentation">
-<h1>Welcome to dolo&#8217;s documentation!<a class="headerlink" href="#welcome-to-dolo-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Quick tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation instructions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install_linux.html">Install on linux</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install_windows.html">Install on windows</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="structure.html">Informations for developpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test.html">Testing function documentation</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="informations-for-developpers">
+<h1>Informations for developpers<a class="headerlink" href="#informations-for-developpers" title="Permalink to this headline">¶</a></h1>
+<p>Current folder organization</p>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
-<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+<li>model file (dynare modfile or yamlfile)</li>
+<li>symbolic model (sympy only)</li>
+<li>compiler (sympy only)</li>
+<li>numeric (everything with numerical calculations)</li>
 </ul>
+<p>New structure</p>
+<ol class="arabic">
+<li><p class="first">serialized model: YAML file / modfile</p>
+</li>
+<li><dl class="first docutils">
+<dt>symbolic model</dt>
+<dd><ul class="first last simple">
+<li>generic</li>
+<li>implements type checkers</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>compiled models (complies with numeric interface)</dt>
+<dd><ul class="first last simple">
+<li>can be Matlab/Python/...</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>numerical methods</dt>
+<dd><ul class="first last simple">
+<li>pure algorithms: take matrices as input</li>
+<li>model aware: take compiled models as input</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>commands</dt>
+<dd><ul class="first last simple">
+<li>define user-friendly commands</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
 </div>
 
 
@@ -125,9 +149,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tutorial.html" title="Quick tutorial"
+          <a href="test.html" title="Testing function documentation"
              >next</a> |</li>
-        <li><a href="#">dolo 0.3 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="install_windows.html" title="Install on windows"
+             >previous</a> |</li>
+        <li><a href="index.html">dolo 0.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
